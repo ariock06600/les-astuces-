@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Autodictée Parfaite - Méthode CM1</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            nunito: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            space: {
+              900: '#060814',
+              850: '#0c1026',
+              800: '#131937',
+              700: '#1f2854',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .star-bg {
+      background-image: 
+        radial-gradient(1px 1px at 25px 35px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 140px 90px, #a855f7, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 280px 210px, #38bdf8, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 390px 75px, #facc15, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 500px 320px, #ffffff, rgba(0,0,0,0));
+      background-size: 550px 400px;
+    }
+    .step-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .step-card:hover {
+      transform: translateY(-6px);
+    }
+  </style>
+</head>
+<body class="font-nunito bg-slate-100 dark:bg-space-900 text-slate-800 dark:text-slate-100 min-h-screen star-bg transition-colors duration-300">
+
+  <!-- En-tête de navigation -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-space-850/80 border-b border-slate-200 dark:border-space-700">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showLanding()">
+        <span class="text-3xl">🕵️‍♂️</span>
+        <div>
+          <h1 class="font-fredoka text-lg md:text-xl font-bold text-violet-600 dark:text-violet-400 leading-tight">
+            Mission Autodictée CM1
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Le radar anti-pièges & mémoire photographique</p>
+        </div>
+      </div>
+
+      <!-- Compteur et Thème -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 bg-slate-200/80 dark:bg-space-800 px-3 py-1.5 rounded-full border border-slate-300 dark:border-space-700">
+          <span class="text-sm">🎯</span>
+          <span class="text-xs font-bold font-fredoka text-violet-600 dark:text-violet-300" id="progress-text">0 / 6 étapes</span>
+          <div class="w-16 bg-slate-300 dark:bg-space-700 h-2 rounded-full overflow-hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-violet-500 to-emerald-400 h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-200 dark:bg-space-800 hover:scale-105 transition-all text-sm" title="Changer d'ambiance">
+          <span id="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEUR PRINCIPAL -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- ==================== LANDING PAGE ==================== -->
+    <div id="landing-view" class="space-y-10">
+      
+      <!-- Bannière d'accueil -->
+      <section class="text-center max-w-3xl mx-auto space-y-4">
+        <div class="inline-flex items-center gap-2 bg-amber-400/20 text-amber-500 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider border border-amber-400/30">
+          ⚡ Objectif Zéro Erreur
+        </div>
+        <h2 class="font-fredoka text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+          Comment réussir son <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300">Autodictée</span> ?
+        </h2>
+        <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 font-medium">
+          Une autodictée, ce n'est pas seulement apprendre par cœur comme un robot. C'est d'abord repérer tous les secrets cachés dans le texte pour l'écrire sans faute de mémoire !
+        </p>
+
+        <!-- Grade Débloqué -->
+        <div class="inline-block p-4 rounded-2xl bg-white/70 dark:bg-space-800/80 border border-slate-200 dark:border-space-700 shadow-lg">
+          <p class="text-xs uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Ton rang de champion des mots :</p>
+          <p id="rank-badge" class="font-fredoka text-lg font-bold text-violet-500 dark:text-violet-400">🌟 Apprenti Enquêteur</p>
+        </div>
+      </section>
+
+      <!-- Grille des 6 Catégories -->
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Étape 1 -->
+        <div onclick="openPage(1)" class="step-card cursor-pointer rounded-2xl p-6 bg-amber-500/10 dark:bg-amber-950/30 border-2 border-amber-400/40 hover:border-amber-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">📖</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-600 dark:text-amber-300 font-bold">Étape 1</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-amber-600 dark:text-amber-300">Comprendre l'Histoire</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Si tu ne comprends pas ce qui se passe, impossible de t'en souvenir ! Découvre le sens du texte.</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-amber-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Étape 2 -->
+        <div onclick="openPage(2)" class="step-card cursor-pointer rounded-2xl p-6 bg-cyan-500/10 dark:bg-cyan-950/30 border-2 border-cyan-400/40 hover:border-cyan-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">🔍</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-cyan-400/20 text-cyan-600 dark:text-cyan-300 font-bold">Étape 2</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-cyan-600 dark:text-cyan-300">La Chasse aux Mots Invariables</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Les petits mots coquins qui ne changent jamais (toujours, soudain, beaucoup...) et leurs pièges.</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-cyan-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Étape 3 -->
+        <div onclick="openPage(3)" class="step-card cursor-pointer rounded-2xl p-6 bg-purple-500/10 dark:bg-purple-950/30 border-2 border-purple-400/40 hover:border-purple-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">💍</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-purple-400/20 text-purple-600 dark:text-purple-300 font-bold">Étape 3</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-purple-600 dark:text-purple-300">Le Radar des Accords</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Repère le chef du groupe nominal et fais le mariage parfait entre le Sujet et le Verbe conjugué.</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-purple-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Étape 4 -->
+        <div onclick="openPage(4)" class="step-card cursor-pointer rounded-2xl p-6 bg-pink-500/10 dark:bg-pink-950/30 border-2 border-pink-400/40 hover:border-pink-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">📸</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-pink-400/20 text-pink-600 dark:text-pink-300 font-bold">Étape 4</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-pink-600 dark:text-pink-300">L'Appareil Photo Mental</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Ferme les yeux et projette le texte phrase par phrase avec les lettres muettes et la ponctuation.</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-pink-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Étape 5 -->
+        <div onclick="openPage(5)" class="step-card cursor-pointer rounded-2xl p-6 bg-emerald-500/10 dark:bg-emerald-950/30 border-2 border-emerald-400/40 hover:border-emerald-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">✍️</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-600 dark:text-emerald-300 font-bold">Étape 5</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-emerald-600 dark:text-emerald-300">Le Test de la Feuille Cachée</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Entraîne-toi sur un cahier de brouillon en masquant le modèle : écris sans tricher !</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-emerald-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Étape 6 -->
+        <div onclick="openPage(6)" class="step-card cursor-pointer rounded-2xl p-6 bg-rose-500/10 dark:bg-rose-950/30 border-2 border-rose-400/40 hover:border-rose-400 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">🛡️</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-rose-400/20 text-rose-600 dark:text-rose-300 font-bold">Étape 6</span>
+            </div>
+            <h3 class="font-fredoka text-xl font-bold text-rose-600 dark:text-rose-300">L'Autocorrection Laser</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Compare ton brouillon lettre par lettre avec le texte officiel pour éliminer la moindre erreur.</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-rose-500">
+            <span>Explorer la mission</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ==================== PAGES DE CONTENU DÉTAILLÉ ==================== -->
+    <div id="detail-view" class="hidden space-y-6">
+      <button onclick="showLanding()" class="inline-flex items-center gap-2 text-sm font-bold text-violet-500 hover:text-violet-400 transition-colors">
+        <span>⬅️ Revenir à la vue d'ensemble</span>
+      </button>
+
+      <!-- Contenu injecté dynamiquement -->
+      <div id="page-content" class="rounded-3xl p-6 md:p-10 border shadow-2xl backdrop-blur-md"></div>
+    </div>
+
+  </main>
+
+  <script>
+    // Données des 6 étapes
+    const stepsData = [
+      {
+        id: 1,
+        title: "Comprendre l'Histoire",
+        badge: "Étape 1",
+        icon: "📖",
+        color: "amber",
+        borderColor: "border-amber-400",
+        bgLight: "bg-amber-500/10 dark:bg-amber-950/20",
+        textColor: "text-amber-500 dark:text-amber-300",
+        tagline: "Un texte bien compris est à moitié mémorisé !",
+        points: [
+          {
+            title: "Lire le texte à voix haute 2 fois",
+            desc: "Lis-le d'abord pour découvrir le sujet, puis une deuxième fois plus lentement en articulant bien chaque mot."
+          },
+          {
+            title: "Faire le film dans sa tête",
+            desc: "Qui est le personnage ? Où cela se passe-t-il ? Quand ? Que lui arrive-t-il ? Si tu visualises les images, tu retiendras la suite des phrases."
+          },
+          {
+            title: "Chasser les mots inconnus au dictionnaire",
+            desc: "Si un mot t'échappe, cherche sa définition. On ne peut pas orthographier correctement un mot dont on ignore le sens !"
+          },
+          {
+            title: "Raconter l'histoire avec ses propres mots",
+            desc: "Ferme les yeux et explique à un parent ou à toi-même : « Dans cette autodictée, c'est l'histoire de... »"
+          }
+        ],
+        tip: "💡 Astuce de champion : Trouve combien il y a de phrases au total (compte les points !). Cela te donnera le plan de ton texte."
+      },
+      {
+        id: 2,
+        title: "La Chasse aux Mots Invariables",
+        badge: "Étape 2",
+        icon: "🔍",
+        color: "cyan",
+        borderColor: "border-cyan-400",
+        bgLight: "bg-cyan-500/10 dark:bg-cyan-950/20",
+        textColor: "text-cyan-500 dark:text-cyan-300",
+        tagline: "Ces petits mots ne changent jamais d'habits, retiens leur orthographe par cœur !",
+        points: [
+          {
+            title: "Les surligner au fluo jaune",
+            desc: "Parcours ton texte et repère tous les mots invariables : soudain, toujours, jamais, autrefois, alors, longtemps, aujourd'hui..."
+          },
+          {
+            title: "Attention aux lettres muettes finales",
+            desc: "Beaucoup se terminent par un « s » muet (toujour<strong>s</strong>, depui<strong>s</strong>, parfoi<strong>s</strong>) ou un « t » (bientô<strong>t</strong>, aussitô<strong>t</strong>)."
+          },
+          {
+            title: "L'apostrophe et le trait d'union",
+            desc: "Ne te fais pas piéger par <em>aujourd'hui</em> (avec son apostrophe) ou <em>peut-être</em> et <em>au-dessus</em> (avec leur trait d'union)."
+          },
+          {
+            title: "Les épeler à l'envers pour s'amuser",
+            desc: "Exemple pour 'JAMAIS' : S - I - A - M - A - J. Si tu y arrives, ton cerveau l'a imprimé pour toujours !"
+          }
+        ],
+        tip: "🎯 Piège classique en CM1 : Ne confonds pas 'tout à coup' (sans tiret) et 'peut-être' (avec tiret) !"
+      },
+      {
+        id: 3,
+        title: "Le Radar des Accords",
+        badge: "Étape 3",
+        icon: "💍",
+        color: "purple",
+        borderColor: "border-purple-400",
+        bgLight: "bg-purple-500/10 dark:bg-purple-950/20",
+        textColor: "text-purple-500 dark:text-purple-300",
+        tagline: "Fais briller les chaînes d'accords pour ne pas perdre de points !",
+        points: [
+          {
+            title: "L'accord dans le Groupe Nominal (GN)",
+            desc: "Trouve le chef (le Nom). Si le nom est féminin pluriel, le déterminant et l'adjectif doivent s'habiller pareil ! (ex: <em>Les grandes forêts sombres</em>)."
+          },
+          {
+            title: "Le mariage d'amour Sujet + Verbe",
+            desc: "Souligne le verbe, demande-toi : « Qui est-ce qui fait l'action ? » pour dénicher le Sujet. Remplace mentalement le sujet par un pronom (Il, Elle, Ils, Elles)."
+          },
+          {
+            title: "Identifier le temps du texte",
+            desc: "Le texte est-il au présent, à l'imparfait (terminaisons -ais, -ait, -aient) ou au passé composé ? Connaître le temps évite de mélanger les terminaisons !"
+          },
+          {
+            title: "Défier les homophones grammaticaux",
+            desc: "Chasse les sosies : <em>a / à</em> (remplace par avait), <em>et / est</em> (remplace par était), <em>son / sont</em> (remplace par étaient), <em>on / ont</em>."
+          }
+        ],
+        tip: "🔍 Radar magique : Encadre les 'ENT' des verbes au pluriel pour ne jamais les oublier !"
+      },
+      {
+        id: 4,
+        title: "L'Appareil Photo Mental",
+        badge: "Étape 4",
+        icon: "📸",
+        color: "pink",
+        borderColor: "border-pink-400",
+        bgLight: "bg-pink-500/10 dark:bg-pink-950/20",
+        textColor: "text-pink-500 dark:text-pink-300",
+        tagline: "Imprime la photo du texte directement dans ta mémoire !",
+        points: [
+          {
+            title: "Photographier phrase par phrase",
+            desc: "Regarde fixement la première phrase pendant 15 secondes. Ferme les yeux et récite-la dans ta tête en voyant chaque mot s'écrire."
+          },
+          {
+            title: "Épeler les mots difficiles les yeux fermés",
+            desc: "Prends les mots avec des lettres doubles (ex: <em>feui<strong>ll</strong>e</em>, <em>sou<strong>ff</strong>le</em>) et épelle-les à voix haute."
+          },
+          {
+            title: "Mémoriser la ponctuation et les majuscules",
+            desc: "Remarque où se trouvent les virgules, les deux-points ou les guillemets. Une majuscule au début de chaque phrase, toujours !"
+          },
+          {
+            title: "Écrire dans les airs avec son doigt",
+            desc: "Lève ton index et écris le mot difficile dans le vide comme si tu avais une craie magique."
+          }
+        ],
+        tip: "📸 Déclic : Si une phrase est trop longue, coupe-la en deux morceaux avant de la photographier !"
+      },
+      {
+        id: 5,
+        title: "Le Test de la Feuille Cachée",
+        badge: "Étape 5",
+        icon: "✍️",
+        color: "emerald",
+        borderColor: "border-emerald-400",
+        bgLight: "bg-emerald-500/10 dark:bg-emerald-950/20",
+        textColor: "text-emerald-500 dark:text-emerald-300",
+        tagline: "Le grand entraînement sur ton cahier de brouillon !",
+        points: [
+          {
+            title: "Cacher le modèle avec une feuille blanche",
+            desc: "Ne laisse pas traîner le texte sous tes yeux. Le jeu, c'est de faire travailler ta mémoire sans regarder."
+          },
+          {
+            title: "Écrire la première phrase d'une traite",
+            desc: "Écris-la sans t'arrêter. Si tu as un doute, ne triche pas, continue jusqu'au point."
+          },
+          {
+            title: "La méthode du carton cacheur",
+            desc: "Baisse le cache d'une ligne pour vérifier la phrase 1. Si c'est juste, cache à nouveau et écris la phrase 2."
+          },
+          {
+            title: "Refaire l'exercice une seconde fois",
+            desc: "Le lendemain ou quelques heures plus tard, réécris tout le texte d'un seul coup du début à la fin."
+          }
+        ],
+        tip: "⏱️ Pas de précipitation : Prends ton temps pour bien soigner ton écriture et tes accents."
+      },
+      {
+        id: 6,
+        title: "L'Autocorrection Laser",
+        badge: "Étape 6",
+        icon: "🛡️",
+        color: "rose",
+        borderColor: "border-rose-400",
+        bgLight: "bg-rose-500/10 dark:bg-rose-950/20",
+        textColor: "text-rose-500 dark:text-rose-300",
+        tagline: "Vérifie comme un maître d'école pour décrocher le 20/20 !",
+        points: [
+          {
+            title: "La vérification lettre par lettre",
+            desc: "Mets ton stylo vert sous chaque lettre du texte modèle et compare avec ton brouillon. Ne saute aucun mot !"
+          },
+          {
+            title: "La grille des 4 feux tricolores",
+            desc: "Vérifie 4 choses précises : 1. Majuscules et points ? 2. Pluriel des noms et adjectifs ? 3. Terminaisons des verbes ? 4. Accents oubliés ?"
+          },
+          {
+            title: "Le carnet des récidivistes",
+            desc: "Si tu t'es trompé sur un mot, écris-le 3 fois en grand sur une page spéciale pour ne plus jamais te faire avoir."
+          },
+          {
+            title: "Le repos du guerrier",
+            desc: "Dors bien la veille du contrôle ! C'est pendant la nuit que ton cerveau range définitivement l'autodictée dans sa boîte à souvenirs."
+          }
+        ],
+        tip: "🌟 Félicitations : Tu as toutes les armes pour réussir brillamment ton autodictée en classe !"
+      }
+    ];
+
+    // État des étapes cochées
+    let completedSteps = new Set();
+
+    function updateProgress() {
+      const count = completedSteps.size;
+      const percent = (count / 6) * 100;
+      
+      document.getElementById('progress-text').innerText = `${count} / 6 validées`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+
+      // Rang de l'élève
+      const rankBadge = document.getElementById('rank-badge');
+      if (count === 0) rankBadge.innerText = "🌟 Apprenti Enquêteur";
+      else if (count <= 2) rankBadge.innerText = "🔍 Détective des Mots";
+      else if (count <= 4) rankBadge.innerText = "⚡ Chasseur d'Accords";
+      else if (count === 5) rankBadge.innerText = "🎖️ Expert Mémoire Flash";
+      else {
+        rankBadge.innerText = "👑 Grand Maître de l'Autodictée !";
+        triggerCelebration();
+      }
+    }
+
+    function toggleStep(id) {
+      if (completedSteps.has(id)) {
+        completedSteps.delete(id);
+      } else {
+        completedSteps.add(id);
+      }
+      updateProgress();
+      renderPage(id);
+    }
+
+    function showLanding() {
+      document.getElementById('landing-view').classList.remove('hidden');
+      document.getElementById('detail-view').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openPage(stepId) {
+      document.getElementById('landing-view').classList.add('hidden');
+      document.getElementById('detail-view').classList.remove('hidden');
+      renderPage(stepId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderPage(stepId) {
+      const step = stepsData.find(s => s.id === stepId);
+      const isDone = completedSteps.has(stepId);
+      const prevId = stepId > 1 ? stepId - 1 : null;
+      const nextId = stepId < 6 ? stepId + 1 : null;
+
+      const container = document.getElementById('page-content');
+      container.className = `rounded-3xl p-6 md:p-10 border-2 ${step.borderColor} ${step.bgLight} shadow-2xl backdrop-blur-md transition-all`;
+
+      container.innerHTML = `
+        <div class="space-y-8">
+          
+          <!-- En-tête de la page -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-300 dark:border-slate-700 pb-6">
+            <div class="flex items-center space-x-4">
+              <span class="text-5xl">${step.icon}</span>
+              <div>
+                <span class="font-fredoka text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-200 dark:bg-space-800 ${step.textColor}">
+                  ${step.badge}
+                </span>
+                <h2 class="font-fredoka text-2xl md:text-4xl font-bold mt-1 text-slate-900 dark:text-white">
+                  ${step.title}
+                </h2>
+                <p class="text-sm md:text-base font-semibold text-slate-600 dark:text-slate-300">${step.tagline}</p>
+              </div>
+            </div>
+
+            <!-- Bouton de validation -->
+            <button onclick="toggleStep(${step.id})" class="px-5 py-3 rounded-2xl font-fredoka font-bold text-sm transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2 ${
+              isDone 
+              ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+              : 'bg-white dark:bg-space-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-space-700 hover:border-emerald-400'
+            }">
+              <span>${isDone ? '✅ Validée avec succès !' : '⭕ Marquer cette étape comme apprise'}</span>
+            </button>
+          </div>
+
+          <!-- Points détaillés -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            ${step.points.map((pt, i) => `
+              <div class="bg-white/80 dark:bg-space-800/80 rounded-2xl p-5 border border-slate-200/60 dark:border-space-700 shadow-sm space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-space-700 text-xs font-fredoka font-bold flex items-center justify-center text-slate-700 dark:text-slate-300">${i + 1}</span>
+                  <h4 class="font-fredoka text-base md:text-lg font-bold text-slate-900 dark:text-white">${pt.title}</h4>
+                </div>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed pl-8">${pt.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Carte Astuce de champion -->
+          <div class="p-4 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-sm font-semibold flex items-center gap-3">
+            <span class="text-2xl">💡</span>
+            <div>${step.tip}</div>
+          </div>
+
+          <!-- Navigation Précédent / Suivant -->
+          <div class="flex items-center justify-between pt-6 border-t border-slate-300 dark:border-slate-700">
+            ${prevId ? `
+              <button onclick="openPage(${prevId})" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:${step.textColor} transition-colors flex items-center gap-2">
+                <span>⬅️ Étape précédente</span>
+              </button>
+            ` : '<div></div>'}
+
+            <button onclick="showLanding()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-space-800 text-xs font-bold hover:bg-slate-300 dark:hover:bg-space-700 transition-colors">
+              Menu principal
+            </button>
+
+            ${nextId ? `
+              <button onclick="openPage(${nextId})" class="text-sm font-bold ${step.textColor} hover:opacity-80 transition-opacity flex items-center gap-2">
+                <span>Étape suivante ➡️</span>
+              </button>
+            ` : '<div></div>'}
+          </div>
+
+        </div>
+      `;
+    }
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+    }
+
+    function triggerCelebration() {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#38bdf8', '#a855f7', '#facc15', '#34d399', '#f43f5e']
+      });
+    }
+
+    // Initialisation
+    updateProgress();
+  </script>
+</body>
+</html>
