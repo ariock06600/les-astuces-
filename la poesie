@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Poésie Stellaire - CM1</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Canvas Confetti pour la célébration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'cursive'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        cosmos: {
+                            950: '#070814',
+                            900: '#0c1024',
+                            800: '#151d3b',
+                            700: '#202b54',
+                        },
+                        star: {
+                            cyan: '#00f5d4',
+                            blue: '#3a86ff',
+                            purple: '#8338ec',
+                            pink: '#ff006e',
+                            gold: '#ffbe0b',
+                            coral: '#fb5607',
+                            emerald: '#06d6a0'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 25px -4px rgba(0, 245, 212, 0.45)',
+                        'neon-pink': '0 0 25px -4px rgba(255, 0, 110, 0.45)',
+                        'neon-gold': '0 0 25px -4px rgba(255, 190, 11, 0.45)',
+                        'neon-purple': '0 0 25px -4px rgba(131, 56, 236, 0.45)',
+                        'glow': '0 0 35px -5px rgba(131, 56, 236, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, .font-title {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Arrière-plan nébuleuse et étoiles en mode sombre */
+        .stars-canvas {
+            background-color: #070814;
+            background-image: 
+                radial-gradient(2px 2px at 25px 35px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 95px 140px, rgba(255, 255, 255, 0.8), rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 170px 80px, #00f5d4, rgba(0,0,0,0)),
+                radial-gradient(2.5px 2.5px at 260px 210px, #ffbe0b, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 340px 110px, #ff006e, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 470px 240px, #8338ec, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 580px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 660px 190px, #3a86ff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 700px 370px;
+        }
+
+        /* Thème clair (Ciel Diurne Poétique) */
+        .day-canvas {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+
+        .card-cosmic {
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px) scale(1.015);
+        }
+
+        .floating-orb {
+            animation: orbFloat 4.5s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .fade-in {
+            animation: smoothFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes smoothFade {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body id="page-body" class="min-h-screen flex flex-col text-slate-100 stars-canvas">
+
+    <!-- BARRE DE NAVIGATION COSMIQUE -->
+    <header class="sticky top-0 z-40 border-b border-purple-900/60 bg-cosmos-950/85 backdrop-blur-md px-4 py-3.5 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Logo & Rangs du Troubadour Cosmique -->
+            <button onclick="showSection('landing-dashboard')" class="flex items-center gap-3 text-left focus:outline-none group">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-star-blue via-star-purple to-star-pink p-0.5 shadow-neon-purple floating-orb group-hover:scale-105 transition-transform">
+                    <div class="w-full h-full bg-cosmos-900 rounded-[14px] flex items-center justify-center text-2xl">
+                        🎭
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-star-cyan/20 text-star-cyan border border-star-cyan/40">
+                            Laboratoire CM1
+                        </span>
+                        <span id="rank-indicator" class="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-star-purple/20 text-purple-300 border border-purple-500/40">
+                            Apprenti Poète
+                        </span>
+                    </div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-star-cyan transition-colors">
+                        Mission Poésie Stellaire
+                    </h1>
+                </div>
+            </button>
+
+            <!-- Actions : Jauge de Récitation & Toggle Jour/Nuit -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                
+                <!-- Compteur d'Étoiles de Mémorisation -->
+                <div class="flex items-center gap-2.5 bg-cosmos-900/80 border border-slate-700/80 px-3.5 py-1.5 rounded-2xl shadow-inner">
+                    <span class="text-xs font-bold text-slate-300 hidden md:inline">Énergie Poétique :</span>
+                    <i class="fa-solid fa-star text-star-gold text-sm animate-pulse"></i>
+                    <div class="w-20 sm:w-28 bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                        <div id="gauge-fill" class="bg-gradient-to-r from-star-cyan via-star-purple to-star-pink h-full w-0 rounded-full transition-all duration-500 shadow-neon-cyan"></div>
+                    </div>
+                    <span id="gauge-text" class="text-xs font-bold font-fredoka text-star-cyan min-w-[28px] text-right">0/6</span>
+                </div>
+
+                <!-- Bascule Mode Nuit / Jour -->
+                <button onclick="toggleDayNight()" id="theme-btn" class="w-10 h-10 rounded-xl bg-cosmos-900 hover:bg-cosmos-800 border border-slate-700 text-star-gold flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-md" title="Changer d'ambiance d'apprentissage">
+                    <i id="theme-btn-icon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- =================== ACCUEIL : TABLEAU DES 6 ÉTAPES =================== -->
+        <section id="landing-dashboard" class="fade-in space-y-8">
+            
+            <!-- Capsule Holographique d'introduction -->
+            <div class="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-purple-500/30 bg-gradient-to-br from-cosmos-900/95 via-purple-950/70 to-cosmos-900/95 backdrop-blur-xl shadow-glow">
+                <div class="absolute -top-24 -right-24 w-72 h-72 bg-star-purple/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-star-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                    <div class="relative shrink-0">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-star-cyan via-star-purple to-star-pink p-1 shadow-neon-pink floating-orb flex items-center justify-center text-5xl sm:text-6xl">
+                            🎙️
+                        </div>
+                        <span class="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-lg bg-emerald-500 text-slate-950 font-black text-[10px] uppercase shadow-md animate-pulse">
+                            Prêt
+                        </span>
+                    </div>
+
+                    <div class="text-center md:text-left flex-1">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/60 border border-purple-400/30 text-purple-200 text-xs font-bold mb-2">
+                            <span>✨ Guide de Mémorisation sans Stress • CM1</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-2">
+                            Apprends ta poésie comme une chanson galactique !
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+                            Fini le par cœur douloureux ! Grâce aux techniques des grands acteurs et des champions de la mémoire, 
+                            découvre comment transformer chaque vers en images, en rythmes et en émotions. 
+                            <strong>Valide les 6 étapes</strong> pour réciter avec assurance et fierté devant ta classe !
+                        </p>
+                    </div>
+
+                    <div class="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2.5 w-full sm:w-auto">
+                        <button onclick="showSection('stage-1')" class="w-full px-5 py-3 rounded-2xl bg-gradient-to-r from-star-cyan to-star-blue text-slate-950 font-black font-fredoka text-sm shadow-neon-cyan hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Première Balise
+                        </button>
+                        <button onclick="resetPoemChecklist()" class="w-full px-4 py-2.5 rounded-2xl bg-cosmos-800 hover:bg-cosmos-700 border border-slate-700 text-slate-300 font-bold text-xs transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-rotate-left"></i> Recommencer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRILLE DES 6 CATÉGORIES / ÉTAPES -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-map-location-dot text-star-cyan"></i>
+                        Les 6 Étapes de la Réussite
+                    </h3>
+                    <span class="text-xs text-slate-400">Clique pour découvrir les astuces de chaque étape</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    
+                    <!-- ÉTAPE 1 : Découverte & Compréhension -->
+                    <div onclick="showSection('stage-1')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-sky-500/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl group-hover:bg-sky-500/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    01
+                                </span>
+                                <span id="star-tag-1" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🔎</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">
+                                Découverte & Compréhension
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                Lire calmement, débusquer les mots rares au dictionnaire et saisir les émotions de l'auteur.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-sky-300">
+                            <span>Comprendre le poème</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 2 : Imaginer & Dessiner -->
+                    <div onclick="showSection('stage-2')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-amber-500/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    02
+                                </span>
+                                <span id="star-tag-2" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🎨</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
+                                Imaginer & Dessiner
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                Projeter le film mental dans sa tête, dessiner des repères visuels ou un mini-croquis par strophe.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-amber-300">
+                            <span>Créer le film mental</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 3 : Le découpage en morceaux -->
+                    <div onclick="showSection('stage-3')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-star-cyan/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-star-cyan/10 rounded-full blur-2xl group-hover:bg-star-cyan/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-star-cyan/20 text-star-cyan border border-star-cyan/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    03
+                                </span>
+                                <span id="star-tag-3" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🧩</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-star-cyan transition-colors">
+                                Découpage en Morceaux
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                Strophe par strophe, vers par vers. La méthode de l'escalier pour retenir sans surcharge cognitive.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-star-cyan">
+                            <span>Assembler le puzzle</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 4 : Astuces magiques de mémorisation -->
+                    <div onclick="showSection('stage-4')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-purple-500/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    04
+                                </span>
+                                <span id="star-tag-4" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🪄</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
+                                Astuces Magiques de Mémoire
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                Le code des initiales, cacher le texte petit à petit avec un carton, et réciter en marchant ou en rythme.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-purple-300">
+                            <span>Activer les sorts secrets</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 5 : Le ton et l'interprétation -->
+                    <div onclick="showSection('stage-5')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-star-coral/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-300 border border-orange-500/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    05
+                                </span>
+                                <span id="star-tag-5" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🎭</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">
+                                Ton & Interprétation
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                Respecter la ponctuation (virgule = petite pause, point = respiration), varier la voix et captiver le public.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-orange-300">
+                            <span>Monter sur scène</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 6 : Le test final de récitation -->
+                    <div onclick="showSection('stage-6')" class="hover-lift cursor-pointer group rounded-3xl p-5 border border-star-pink/30 bg-cosmos-900/80 hover:bg-cosmos-800/90 transition-all duration-300 shadow-md relative overflow-hidden flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-300 border border-pink-500/40 font-bold font-fredoka flex items-center justify-center text-lg">
+                                    06
+                                </span>
+                                <span id="star-tag-6" class="hidden text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> Maîtrisé !
+                                </span>
+                            </div>
+                            <div class="text-4xl mb-3">🏆</div>
+                            <h4 class="text-lg font-bold text-white group-hover:text-pink-300 transition-colors">
+                                Le Grand Répétitoire
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                                S'entraîner devant un miroir, son doudou ou un proche, s'enregistrer avec un dictaphone et vérifier les pièges.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-pink-300">
+                            <span>Passer l'ultime test</span>
+                            <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BOÎTE DE VICTOIRE COSMIQUE -->
+            <div id="victory-banner" class="hidden rounded-3xl p-6 sm:p-8 border-2 border-star-gold bg-gradient-to-r from-cosmos-950 via-purple-950 to-cosmos-950 text-center space-y-4 shadow-neon-gold fade-in">
+                <div class="text-6xl animate-bounce">👑</div>
+                <div class="space-y-1">
+                    <span class="px-3 py-1 rounded-full text-xs font-black bg-star-gold/20 text-star-gold uppercase border border-star-gold/40">
+                        Objectif 100% Accomplie
+                    </span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-white">
+                        BRAVO, GRAND MAÎTRE DE LA POÉSIE !
+                    </h3>
+                </div>
+                <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
+                    Tu connais ton poème sur le bout des doigts, avec le rythme, l'émotion et les respirations. Tu es prêt à briller devant toute la classe et ton professeur !
+                </p>
+                <div class="pt-2">
+                    <button onclick="launchCosmicCelebration()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-star-gold to-star-coral text-slate-950 font-black font-fredoka shadow-neon-gold hover:scale-105 active:scale-95 transition-all">
+                        <i class="fa-solid fa-sparkles mr-2"></i> Lancer la fête cosmique d'étoiles !
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- =================== ÉTAPE 1 : DÉCOUVERTE & COMPRÉHENSION =================== -->
+        <section id="stage-1" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('landing-dashboard')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Tableau de bord
+                </button>
+                <button onclick="showSection('stage-2')" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Étape 2 : Imaginer <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-sky-500/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-sky-500/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-3xl">
+                        🔎
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-sky-400 bg-sky-950/70 border border-sky-500/30 px-3 py-1 rounded-full">
+                            Étape 1 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            Découverte & Compréhension : Le Détective Poétique
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Comprendre l'histoire -->
+                    <div class="rounded-2xl p-5 border border-slate-700/80 bg-cosmos-950/60 space-y-3">
+                        <h3 class="text-base font-bold text-sky-300 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open-reader"></i> 1. De quoi parle le poème ?
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            On ne peut pas retenir facilement un texte qu'on ne comprend pas ! Lis le poème tranquillement 2 ou 3 fois à voix haute.
+                        </p>
+                        <div class="p-3 bg-sky-950/40 border border-sky-500/20 rounded-xl space-y-1.5 text-xs text-slate-200">
+                            <p>• <strong>Qui parle ?</strong> (un animal, un enfant, un voyageur, un arbre ?)</p>
+                            <p>• <strong>Où se passe l'action ?</strong> (en forêt, sous la mer, dans les nuages ?)</p>
+                            <p>• <strong>Que raconte le poème ?</strong> Une aventure joyeuse, un mystère ou un paysage magique ?</p>
+                        </div>
+                    </div>
+
+                    <!-- La chasse aux mots rares -->
+                    <div class="rounded-2xl p-5 border border-slate-700/80 bg-cosmos-950/60 space-y-3">
+                        <h3 class="text-base font-bold text-sky-300 flex items-center gap-2">
+                            <i class="fa-solid fa-spell-check"></i> 2. La chasse aux mots mystérieux
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Les poètes aiment utiliser des mots rares, anciens ou imagés. Surligne au crayon les mots inconnus :
+                        </p>
+                        <div class="p-3 bg-cosmos-900 border border-slate-700 rounded-xl space-y-2 text-xs">
+                            <p class="text-sky-200 font-bold">Exemples classiques en CM1 :</p>
+                            <p class="text-slate-300"><em>« Azur »</em> = le bleu du ciel pur • <em>« Frémir »</em> = trembler doucement • <em>« Bosquet »</em> = petit groupe d'arbres.</p>
+                            <p class="text-slate-400 italic">Cherche dans le dictionnaire ou demande à un adulte pour noter la définition dans la marge !</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case de validation -->
+                <div class="p-4 rounded-2xl bg-sky-950/30 border border-sky-500/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-1" onchange="togglePoemStep(1)" class="w-6 h-6 rounded accent-sky-500 cursor-pointer">
+                    <label for="check-poem-1" class="font-bold text-sky-200 text-sm cursor-pointer select-none">
+                        J'ai lu le poème calmement, j'ai compris toute l'histoire et tous les mots difficiles sont expliqués !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ÉTAPE 2 : IMAGINER & DESSINER =================== -->
+        <section id="stage-2" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('stage-1')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Étape 1 : Découverte
+                </button>
+                <button onclick="showSection('stage-3')" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Étape 3 : Découpage <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-amber-500/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-amber-500/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-3xl">
+                        🎨
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-950/70 border border-amber-500/30 px-3 py-1 rounded-full">
+                            Étape 2 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            Imaginer & Dessiner : Le Cinéma Mental
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Le film mental -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-amber-500/30 space-y-3">
+                        <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                            <i class="fa-solid fa-film"></i> 1. Tourner le film dans sa tête
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Le cerveau retient 10 fois mieux les images que les mots abstraits. 
+                            Ferme les yeux et transforme chaque strophe en une scène de film d'animation :
+                        </p>
+                        <div class="p-3 bg-amber-950/40 border border-amber-500/20 rounded-xl space-y-1.5 text-xs text-slate-200">
+                            <p>• <strong>Les couleurs :</strong> Vois-tu du vert éclatant, un ciel nocturne, des éclats dorés ?</p>
+                            <p>• <strong>Les bruits :</strong> Entends-tu le vent souffler, une porte grincer, une goutte tomber ?</p>
+                            <p>• <strong>Les mouvements :</strong> Qui avance ? Qui saute ? Qui s'envole ?</p>
+                        </div>
+                    </div>
+
+                    <!-- Mini croquis par strophe -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-amber-500/30 space-y-3">
+                        <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-fancy"></i> 2. Dessiner des repères ou une carte mentale
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Prends ton cahier de brouillon : pas besoin d'être Léonard de Vinci ! Des petits symboles simples suffisent :
+                        </p>
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl">
+                                <span class="text-2xl block mb-1">🌲</span>
+                                <span class="text-slate-300">Strophe 1 : La forêt sombre</span>
+                            </div>
+                            <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl">
+                                <span class="text-2xl block mb-1">🦉</span>
+                                <span class="text-slate-300">Strophe 2 : Le cri du hibou</span>
+                            </div>
+                            <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl">
+                                <span class="text-2xl block mb-1">🌕</span>
+                                <span class="text-slate-300">Strophe 3 : La pleine lune</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 italic">Ces images mentales serviront de tremplin pour retrouver chaque vers automatiquement !</p>
+                    </div>
+                </div>
+
+                <!-- Case de validation -->
+                <div class="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-2" onchange="togglePoemStep(2)" class="w-6 h-6 rounded accent-amber-500 cursor-pointer">
+                    <label for="check-poem-2" class="font-bold text-amber-200 text-sm cursor-pointer select-none">
+                        J'ai visualisé tout le film de l'histoire et j'ai mes repères imagés pour chaque strophe !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ÉTAPE 3 : LE DÉCOUPAGE EN MORCEAUX =================== -->
+        <section id="stage-3" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('stage-2')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Étape 2 : Imaginer
+                </button>
+                <button onclick="showSection('stage-4')" class="px-4 py-2 rounded-xl bg-star-cyan hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Étape 4 : Astuces Magiques <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-star-cyan/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-star-cyan/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-star-cyan/20 border border-star-cyan/40 flex items-center justify-center text-3xl">
+                        🧩
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-star-cyan bg-cyan-950/70 border border-star-cyan/30 px-3 py-1 rounded-full">
+                            Étape 3 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            Le Découpage : La Méthode de l'Escalier
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs sm:text-sm text-slate-300">
+                        N'essaie jamais d'avaler toute la poésie d'un coup ! Apprends-la comme un jeu de construction :
+                    </p>
+
+                    <!-- Les 4 marches de l'escalier -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="p-4 rounded-2xl bg-cosmos-950/70 border border-star-cyan/30 space-y-1.5">
+                            <span class="w-7 h-7 rounded-lg bg-star-cyan/20 text-star-cyan font-bold font-fredoka flex items-center justify-center text-sm">1</span>
+                            <h4 class="font-bold text-white text-sm">Le vers numéro 1</h4>
+                            <p class="text-xs text-slate-300">Répète le premier vers 3 fois à voix haute jusqu'à ce qu'il glisse tout seul.</p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-cosmos-950/70 border border-star-cyan/30 space-y-1.5">
+                            <span class="w-7 h-7 rounded-lg bg-star-cyan/20 text-star-cyan font-bold font-fredoka flex items-center justify-center text-sm">2</span>
+                            <h4 class="font-bold text-white text-sm">Le vers 1 + vers 2</h4>
+                            <p class="text-xs text-slate-300">Apprends le 2ème vers, puis récite immédiatement les vers 1 et 2 enchaînés.</p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-cosmos-950/70 border border-star-cyan/30 space-y-1.5">
+                            <span class="w-7 h-7 rounded-lg bg-star-cyan/20 text-star-cyan font-bold font-fredoka flex items-center justify-center text-sm">3</span>
+                            <h4 class="font-bold text-white text-sm">Boucler la strophe</h4>
+                            <p class="text-xs text-slate-300">Termine la première strophe. Répète-la comme le refrain de ton chanteur préféré !</p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-cosmos-950/70 border border-star-cyan/30 space-y-1.5">
+                            <span class="w-7 h-7 rounded-lg bg-star-cyan/20 text-star-cyan font-bold font-fredoka flex items-center justify-center text-sm">4</span>
+                            <h4 class="font-bold text-white text-sm">La passerelle</h4>
+                            <p class="text-xs text-slate-300">Fais très attention au passage entre la strophe 1 et la strophe 2 : c'est là où on hésite souvent !</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-cyan-950/40 border border-star-cyan/30 flex items-center gap-3 text-xs sm:text-sm text-cyan-200">
+                        <i class="fa-solid fa-lightbulb text-star-gold text-xl"></i>
+                        <span><strong>Règle d'or CM1 :</strong> Mieux vaut apprendre 1 strophe par jour pendant 4 jours plutôt que 4 strophes le dimanche soir en panique !</span>
+                    </div>
+                </div>
+
+                <!-- Case de validation -->
+                <div class="p-4 rounded-2xl bg-cyan-950/30 border border-star-cyan/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-3" onchange="togglePoemStep(3)" class="w-6 h-6 rounded accent-cyan-400 cursor-pointer">
+                    <label for="check-poem-3" class="font-bold text-star-cyan text-sm cursor-pointer select-none">
+                        J'ai découpé ma poésie strophe par strophe et je connais les enchaînements sans hésiter !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ÉTAPE 4 : ASTUCES MAGIQUES DE MÉMORISATION =================== -->
+        <section id="stage-4" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('stage-3')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Étape 3 : Découpage
+                </button>
+                <button onclick="showSection('stage-5')" class="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Étape 5 : Le Ton <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-purple-500/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-purple-500/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-3xl">
+                        🪄
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-purple-300 bg-purple-950/70 border border-purple-500/30 px-3 py-1 rounded-full">
+                            Étape 4 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            Les 3 Astuces Magiques de Mémorisation
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Astuce 1 : Code des initiales -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-purple-500/30 space-y-3">
+                        <span class="text-2xl">🔤</span>
+                        <h4 class="font-bold text-purple-300 text-sm">Le Code des Initiales</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Écris uniquement la première lettre de chaque mot sur une feuille :
+                        </p>
+                        <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-lg text-xs font-mono text-star-cyan">
+                            « D u f l b d l »<br>
+                            <span class="text-slate-400 font-sans text-[11px]">(Dans une forêt lointaine, battait du tambour...)</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Ton cerveau comble les trous tout seul, c'est ultra efficace !</p>
+                    </div>
+
+                    <!-- Astuce 2 : La feuille cache-texte -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-purple-500/30 space-y-3">
+                        <span class="text-2xl">🙈</span>
+                        <h4 class="font-bold text-purple-300 text-sm">Le Cache-Texte Évolutif</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Prends une feuille blanche ou ta règle :
+                        </p>
+                        <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-lg text-xs space-y-1 text-slate-300">
+                            <p>• Récite le vers 1 puis cache-le.</p>
+                            <p>• Récite le vers 2 sans regarder le vers 1.</p>
+                            <p>• Cache peu à peu toute la page en ne gardant que les rimes finales !</p>
+                        </div>
+                    </div>
+
+                    <!-- Astuce 3 : Réciter en rythme / marchant -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-purple-500/30 space-y-3">
+                        <span class="text-2xl">🚶‍♂️</span>
+                        <h4 class="font-bold text-purple-300 text-sm">La Marche Poétique</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Bouge ! Fais les 100 pas dans ta chambre ou tape doucement dans tes mains au rythme des syllabes :
+                        </p>
+                        <div class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-lg text-xs space-y-1 text-slate-300">
+                            <p>• Associe 1 pas à 1 temps fort.</p>
+                            <p>• La mémoire du corps (kinesthésique) aide énormément à fixer les poésies longues.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case de validation -->
+                <div class="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-4" onchange="togglePoemStep(4)" class="w-6 h-6 rounded accent-purple-500 cursor-pointer">
+                    <label for="check-poem-4" class="font-bold text-purple-200 text-sm cursor-pointer select-none">
+                        J'ai testé l'une des astuces magiques (initiales, cache-texte ou marche) et mon cerveau a tout enregistré !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ÉTAPE 5 : LE TON ET L'INTERPRÉTATION =================== -->
+        <section id="stage-5" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('stage-4')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Étape 4 : Astuces
+                </button>
+                <button onclick="showSection('stage-6')" class="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Étape 6 : Test Final <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-star-coral/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-star-coral/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-3xl">
+                        🎭
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-orange-400 bg-orange-950/70 border border-orange-500/30 px-3 py-1 rounded-full">
+                            Étape 5 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            Le Ton et l'Interprétation : Devenir Acteur
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Les feux de signalisation de ponctuation -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-orange-500/30 space-y-3">
+                        <h3 class="text-base font-bold text-orange-300 flex items-center gap-2">
+                            <i class="fa-solid fa-traffic-light"></i> 1. Les feux de la ponctuation
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300">
+                            Ne récite pas comme un robot en pilotage automatique ! Respecte les panneaux du code de la route :
+                        </p>
+                        <ul class="space-y-2 text-xs sm:text-sm">
+                            <li class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-yellow-400 text-slate-950 font-black flex items-center justify-center text-xs">,</span>
+                                <span><strong>La virgule :</strong> Demi-pause (1 seconde), on ne baisse pas le ton.</span>
+                            </li>
+                            <li class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-red-500 text-white font-black flex items-center justify-center text-xs">.</span>
+                                <span><strong>Le point :</strong> Vrai arrêt, je respire calmement par le nez.</span>
+                            </li>
+                            <li class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-cyan-400 text-slate-950 font-black flex items-center justify-center text-xs">?</span>
+                                <span><strong>Le point d'interrogation :</strong> La voix monte, on pose une vraie question !</span>
+                            </li>
+                            <li class="p-2.5 bg-cosmos-900 border border-slate-700 rounded-xl flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-full bg-pink-500 text-white font-black flex items-center justify-center text-xs">!</span>
+                                <span><strong>Le point d'exclamation :</strong> Énergie, surprise, colère ou joie éclatante !</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Le jeu d'acteur & posture -->
+                    <div class="p-5 rounded-2xl bg-cosmos-950/60 border border-orange-500/30 space-y-3">
+                        <h3 class="text-base font-bold text-orange-300 flex items-center gap-2">
+                            <i class="fa-solid fa-user-astronaut"></i> 2. La posture du Capitaine
+                        </h3>
+                        <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+                            <p>• <strong>Pieds ancrés au sol :</strong> Ne te balance pas d'un pied sur l'autre.</p>
+                            <p>• <strong>Mains libres :</strong> Ne tripote pas ta règle ou tes manches, garde les mains ouvertes prêtes à faire un geste délicat si besoin.</p>
+                            <p>• <strong>Regard haut :</strong> Ne regarde pas tes chaussures ! Regarde au-dessus des têtes de tes camarades, vers le fond de la classe.</p>
+                            <p>• <strong>Articuler :</strong> Ouvre grand la bouche pour que chaque consonne résonne bien.</p>
+                        </div>
+                        <div class="p-3 bg-orange-950/40 border border-orange-500/30 rounded-xl text-xs text-orange-200">
+                            💡 <em>Astuce secrète :</em> souris légèrement au début de ton poème, cela détend immédiatement tes cordes vocales et donne une voix chaleureuse.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case de validation -->
+                <div class="p-4 rounded-2xl bg-orange-950/30 border border-orange-500/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-5" onchange="togglePoemStep(5)" class="w-6 h-6 rounded accent-orange-500 cursor-pointer">
+                    <label for="check-poem-5" class="font-bold text-orange-200 text-sm cursor-pointer select-none">
+                        Je respecte les silences de la ponctuation et je mets de la vie et des émotions dans ma voix !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ÉTAPE 6 : LE TEST FINAL DE RÉCITATION =================== -->
+        <section id="stage-6" class="hidden fade-in space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="showSection('stage-5')" class="px-4 py-2 rounded-xl bg-cosmos-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-cosmos-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Étape 5 : Le Ton
+                </button>
+                <button onclick="showSection('landing-dashboard')" class="px-4 py-2 rounded-xl bg-star-pink hover:bg-pink-400 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
+                    Voir Mon Bilan Cosmique <i class="fa-solid fa-trophy"></i>
+                </button>
+            </div>
+
+            <div class="rounded-3xl border border-star-pink/40 bg-cosmos-900/90 backdrop-blur-xl p-6 sm:p-8 shadow-glow space-y-6">
+                <div class="flex items-center gap-4 border-b border-star-pink/20 pb-5">
+                    <div class="w-16 h-16 rounded-2xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-3xl">
+                        🏆
+                    </div>
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-wider text-pink-400 bg-pink-950/70 border border-pink-500/30 px-3 py-1 rounded-full">
+                            Étape 6 sur 6
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">
+                            L'Épreuve du Miroir & de l'Enregistreur
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs sm:text-sm text-slate-300">
+                        C'est la répétition générale avant le grand jour ! Voici les 3 épreuves pour être totalement imbattable :
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-2xl bg-cosmos-950/60 border border-pink-500/30 space-y-2">
+                            <div class="text-3xl">🧸</div>
+                            <h4 class="font-bold text-pink-300 text-sm">Le Public d'Entraînement</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Installe ton doudou préféré, ton chien ou un membre de ta famille sur une chaise. Récite-lui le texte d'un bout à l'autre sans t'arrêter même si tu hésites !
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-cosmos-950/60 border border-pink-500/30 space-y-2">
+                            <div class="text-3xl">🪞</div>
+                            <h4 class="font-bold text-pink-300 text-sm">Le Test du Miroir</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Regarde-toi réciter dans le miroir. Observe ton visage : tes sourcils bougent-ils ? As-tu l'air détendu et confiant ?
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-cosmos-950/60 border border-pink-500/30 space-y-2">
+                            <div class="text-3xl">📱</div>
+                            <h4 class="font-bold text-pink-300 text-sm">L'Enregistrement Dictaphone</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Avec le téléphone d'un parent ou une tablette, enregistre ta voix puis réécoute-toi en suivant le texte avec ton doigt : as-tu oublié un petit mot (« de », « le », « et ») ?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case de validation finale -->
+                <div class="p-4 rounded-2xl bg-pink-950/30 border border-star-pink/40 flex items-center gap-3">
+                    <input type="checkbox" id="check-poem-6" onchange="togglePoemStep(6)" class="w-6 h-6 rounded accent-pink-500 cursor-pointer">
+                    <label for="check-poem-6" class="font-bold text-pink-200 text-sm cursor-pointer select-none">
+                        J'ai réussi à réciter la poésie entière sans regarder le cahier : je suis 100% prêt !
+                    </label>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIED DE PAGE COSMIQUE -->
+    <footer class="border-t border-purple-900/50 bg-cosmos-950/90 py-5 px-4 text-center text-xs text-slate-400">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span class="flex items-center gap-2">
+                <i class="fa-solid fa-feather-pointed text-star-cyan"></i>
+                Méthode de récitation et de mémorisation poétique • Cycle 3 / CM1
+            </span>
+            <span>Apprendre avec joie et confiance en soi ✨</span>
+        </div>
+    </footer>
+
+    <!-- SCRIPT DE NAVIGATION, PROGRESSION & THÈME -->
+    <script>
+        // État des 6 balises d'apprentissage
+        const stepsStatus = {
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+            5: false,
+            6: false
+        };
+
+        const ranksList = [
+            "Apprenti Poète",
+            "Éclaireur de Rimes",
+            "Magicien des Vers",
+            "Conteur d'Étoiles",
+            "Orateur Stellaire",
+            "Virtuose de la Scène",
+            "Grand Maître Poète 👑"
+        ];
+
+        // Changement de vue (SPA)
+        function showSection(sectionId) {
+            const sections = [
+                'landing-dashboard',
+                'stage-1',
+                'stage-2',
+                'stage-3',
+                'stage-4',
+                'stage-5',
+                'stage-6'
+            ];
+
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('fade-in');
+                }
+            });
+
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.remove('hidden');
+                void target.offsetWidth; // Déclenchement du reflow pour rejouer l'animation
+                target.classList.add('fade-in');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Coche et mise à jour
+        function togglePoemStep(index) {
+            const checkbox = document.getElementById('check-poem-' + index);
+            stepsStatus[index] = checkbox.checked;
+
+            const starTag = document.getElementById('star-tag-' + index);
+            if (starTag) {
+                if (checkbox.checked) {
+                    starTag.classList.remove('hidden');
+                } else {
+                    starTag.classList.add('hidden');
+                }
+            }
+
+            refreshGauge();
+        }
+
+        // Actualisation jauge et rang
+        function refreshGauge() {
+            const total = 6;
+            const doneCount = Object.values(stepsStatus).filter(Boolean).length;
+            const ratio = Math.round((doneCount / total) * 100);
+
+            // Jauge graphique
+            const fill = document.getElementById('gauge-fill');
+            const txt = document.getElementById('gauge-text');
+            fill.style.width = ratio + '%';
+            txt.innerText = doneCount + '/' + total;
+
+            // Titre de rang
+            const rankLabel = document.getElementById('rank-indicator');
+            rankLabel.innerText = ranksList[doneCount];
+
+            // Célébration si 6/6
+            const banner = document.getElementById('victory-banner');
+            if (doneCount === total) {
+                banner.classList.remove('hidden');
+                launchCosmicCelebration();
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Remise à zéro
+        function resetPoemChecklist() {
+            for (let i = 1; i <= 6; i++) {
+                stepsStatus[i] = false;
+                const chk = document.getElementById('check-poem-' + i);
+                if (chk) chk.checked = false;
+                const tag = document.getElementById('star-tag-' + i);
+                if (tag) tag.classList.add('hidden');
+            }
+            refreshGauge();
+        }
+
+        // Étoiles filantes & confettis
+        function launchCosmicCelebration() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 85,
+                    origin: { y: 0.6 },
+                    colors: ['#00f5d4', '#ffbe0b', '#ff006e', '#8338ec', '#3a86ff']
+                });
+
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 70,
+                        angle: 60,
+                        spread: 60,
+                        origin: { x: 0 }
+                    });
+                    confetti({
+                        particleCount: 70,
+                        angle: 120,
+                        spread: 60,
+                        origin: { x: 1 }
+                    });
+                }, 300);
+            }
+        }
+
+        // Bascule Jour / Nuit
+        let isCosmicDark = true;
+        function toggleDayNight() {
+            const body = document.getElementById('page-body');
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-btn-icon');
+
+            isCosmicDark = !isCosmicDark;
+
+            if (isCosmicDark) {
+                html.classList.add('dark');
+                body.classList.remove('day-canvas', 'text-slate-900');
+                body.classList.add('stars-canvas', 'text-slate-100');
+                icon.className = "fa-solid fa-moon text-lg";
+            } else {
+                html.classList.remove('dark');
+                body.classList.remove('stars-canvas', 'text-slate-100');
+                body.classList.add('day-canvas', 'text-slate-900');
+                icon.className = "fa-solid fa-sun text-lg text-amber-500";
+            }
+        }
+    </script>
+</body>
+</html>
