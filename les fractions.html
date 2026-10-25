@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Fractions CM1 - L'Odyssée du Partage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            nunito: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            space: {
+              900: '#060814',
+              850: '#0c1026',
+              800: '#131937',
+              700: '#1f2854',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .star-bg {
+      background-image: 
+        radial-gradient(1px 1px at 30px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 150px 100px, #38bdf8, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 290px 220px, #ec4899, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 420px 85px, #facc15, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 520px 330px, #34d399, rgba(0,0,0,0));
+      background-size: 550px 400px;
+    }
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1;
+      padding: 0 4px;
+      font-weight: 800;
+    }
+    .frac .num {
+      border-bottom: 2.5px solid currentColor;
+      padding-bottom: 2px;
+    }
+    .frac .den {
+      padding-top: 2px;
+    }
+    .step-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .step-card:hover {
+      transform: translateY(-6px);
+    }
+  </style>
+</head>
+<body class="font-nunito bg-slate-100 dark:bg-space-900 text-slate-800 dark:text-slate-100 min-h-screen star-bg transition-colors duration-300">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-space-850/80 border-b border-slate-200 dark:border-space-700">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showLanding()">
+        <span class="text-3xl">🍕</span>
+        <div>
+          <h1 class="font-fredoka text-lg md:text-xl font-bold text-sky-500 dark:text-sky-400 leading-tight">
+            Mission Fractions CM1
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Le labo visuel des parts et fractions réelles</p>
+        </div>
+      </div>
+
+      <!-- Progression & Thème -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 bg-slate-200/80 dark:bg-space-800 px-3 py-1.5 rounded-full border border-slate-300 dark:border-space-700">
+          <span class="text-sm">🪐</span>
+          <span class="text-xs font-bold font-fredoka text-sky-600 dark:text-sky-300" id="progress-text">0 / 6 validées</span>
+          <div class="w-16 bg-slate-300 dark:bg-space-700 h-2 rounded-full overflow-hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-sky-500 via-pink-500 to-amber-400 h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-200 dark:bg-space-800 hover:scale-105 transition-all text-sm" title="Changer de mode">
+          <span id="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEUR PRINCIPAL -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- ==================== ACCUEIL ==================== -->
+    <div id="landing-view" class="space-y-10">
+      
+      <!-- Titre d'accueil -->
+      <section class="text-center max-w-3xl mx-auto space-y-4">
+        <div class="inline-flex items-center gap-2 bg-sky-400/20 text-sky-600 dark:text-sky-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider border border-sky-400/30">
+          📐 Représentations Visuelles Réelles &amp; Pizza
+        </div>
+        <h2 class="font-fredoka text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+          Visualiser et Réussir les <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-pink-400 to-amber-300">Fractions</span>
+        </h2>
+        <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 font-medium">
+          Chaque page contient de <strong>vraies fractions avec barre horizontale</strong>, des <strong>disques découpés en parts</strong> et des <strong>tablettes de chocolat</strong> interactives.
+        </p>
+
+        <!-- Laboratoire Interactif Corrigé -->
+        <div class="p-5 md:p-6 rounded-3xl bg-white/80 dark:bg-space-850/90 border-2 border-sky-400/40 shadow-xl text-left space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-300 font-bold">Laboratoire Interactif</span>
+              <h3 class="font-fredoka text-xl font-bold text-slate-900 dark:text-white mt-1">Teste ta fraction en direct</h3>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-slate-500">Exemples :</span>
+              <button onclick="setLiveFraction(1, 2)" class="px-3 py-1 text-xs rounded-lg bg-sky-100 dark:bg-space-700 font-bold hover:bg-sky-200 dark:hover:bg-space-600 transition-colors">1/2</button>
+              <button onclick="setLiveFraction(3, 4)" class="px-3 py-1 text-xs rounded-lg bg-sky-100 dark:bg-space-700 font-bold hover:bg-sky-200 dark:hover:bg-space-600 transition-colors">3/4</button>
+              <button onclick="setLiveFraction(2, 3)" class="px-3 py-1 text-xs rounded-lg bg-sky-100 dark:bg-space-700 font-bold hover:bg-sky-200 dark:hover:bg-space-600 transition-colors">2/3</button>
+              <button onclick="setLiveFraction(5, 8)" class="px-3 py-1 text-xs rounded-lg bg-sky-100 dark:bg-space-700 font-bold hover:bg-sky-200 dark:hover:bg-space-600 transition-colors">5/8</button>
+              <button onclick="setLiveFraction(5, 4)" class="px-3 py-1 text-xs rounded-lg bg-pink-100 dark:bg-pink-950/40 text-pink-600 dark:text-pink-300 font-bold hover:bg-pink-200 transition-colors">5/4 (>1)</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center bg-slate-50 dark:bg-space-800/80 p-5 rounded-2xl border border-slate-200 dark:border-space-700">
+            
+            <!-- Curseurs (4 cols) -->
+            <div class="lg:col-span-4 space-y-4">
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Parts prises (Numérateur N)</span>
+                  <span id="num-val" class="font-fredoka text-sky-500 font-bold text-lg">3</span>
+                </div>
+                <input type="range" id="num-range" min="1" max="10" value="3" oninput="updateLiveLab()" class="w-full accent-sky-500 cursor-pointer h-2 bg-slate-200 dark:bg-space-700 rounded-lg">
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Parts au total (Dénominateur D)</span>
+                  <span id="den-val" class="font-fredoka text-amber-500 font-bold text-lg">4</span>
+                </div>
+                <input type="range" id="den-range" min="1" max="10" value="4" oninput="updateLiveLab()" class="w-full accent-amber-500 cursor-pointer h-2 bg-slate-200 dark:bg-space-700 rounded-lg">
+              </div>
+            </div>
+
+            <!-- Écriture réelle (3 cols) -->
+            <div class="lg:col-span-3 text-center py-3 border-y lg:border-y-0 lg:border-x border-slate-200 dark:border-space-700 flex flex-col items-center justify-center">
+              <span class="text-[11px] font-bold text-slate-400 block mb-2 uppercase tracking-wider">Écriture fractionnaire</span>
+              <div class="inline-flex items-center gap-3">
+                <div class="frac text-4xl text-sky-500 dark:text-sky-400">
+                  <span class="num" id="live-num">3</span>
+                  <span class="den" id="live-den">4</span>
+                </div>
+                <div class="text-left">
+                  <p id="live-name" class="font-fredoka text-sm font-bold text-slate-800 dark:text-slate-100">trois quarts</p>
+                  <p id="live-comp" class="text-xs font-bold text-emerald-500 mt-1">&lt; 1 (inférieure à 1)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Double Visualisation (Disque Pizza + Barre Tablette) (5 cols) -->
+            <div class="lg:col-span-5 grid grid-cols-2 gap-3 items-center">
+              <!-- Pizza Disque -->
+              <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-space-900/60 border border-slate-200 dark:border-space-700 min-h-[140px]">
+                <div id="live-pie-container" class="flex items-center justify-center"></div>
+                <span class="text-[11px] font-bold text-slate-400 mt-2">Disque en parts</span>
+              </div>
+
+              <!-- Tablette Rectangle -->
+              <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-space-900/60 border border-slate-200 dark:border-space-700 min-h-[140px]">
+                <div id="live-bar-container" class="flex items-center justify-center"></div>
+                <span class="text-[11px] font-bold text-slate-400 mt-2">Bande / Tablette</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Grade débloqué -->
+        <div class="inline-block p-4 rounded-2xl bg-white/70 dark:bg-space-800/80 border border-slate-200 dark:border-space-700 shadow-lg">
+          <p class="text-xs uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Ton niveau de mathématicien :</p>
+          <p id="rank-badge" class="font-fredoka text-lg font-bold text-sky-500 dark:text-sky-400">🍰 Apprenti Partageur</p>
+        </div>
+      </section>
+
+      <!-- Grille des 6 Catégories -->
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Carte 1 -->
+        <div onclick="openPage(1)" class="step-card cursor-pointer rounded-2xl p-6 bg-amber-500/10 dark:bg-amber-950/30 border-2 border-amber-400/40 hover:border-amber-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">🍕</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-600 dark:text-amber-300 font-bold">Étape 1</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-amber-600 dark:text-amber-300">Qu'est-ce qu'une fraction ?</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">L'unité, le partage en parts égales et la vraie fraction avec numérateur et dénominateur.</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 flex items-center justify-around border border-amber-400/30">
+              <div class="frac text-2xl text-amber-500">
+                <span class="num">3</span>
+                <span class="den">4</span>
+              </div>
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                <span class="text-sky-500">3 parts coloriées</span><br>
+                <span class="text-amber-500">sur 4 au total</span>
+              </div>
+              <div id="card1-pie" class="w-12 h-12 flex items-center justify-center"></div>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-amber-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Carte 2 -->
+        <div onclick="openPage(2)" class="step-card cursor-pointer rounded-2xl p-6 bg-cyan-500/10 dark:bg-cyan-950/30 border-2 border-cyan-400/40 hover:border-cyan-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">🗣️</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-cyan-400/20 text-cyan-600 dark:text-cyan-300 font-bold">Étape 2</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-cyan-600 dark:text-cyan-300">Lire et Nommer les Fractions</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Demi, tiers, quart et suffixe <em>-ième</em> avec illustrations par camemberts.</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 flex items-center justify-around border border-cyan-400/30 text-xs font-bold">
+              <span class="inline-flex items-center gap-1"><span class="frac text-cyan-500"><span class="num">1</span><span class="den">2</span></span> demi</span>
+              <span class="inline-flex items-center gap-1"><span class="frac text-cyan-500"><span class="num">1</span><span class="den">3</span></span> tiers</span>
+              <span class="inline-flex items-center gap-1"><span class="frac text-cyan-500"><span class="num">1</span><span class="den">4</span></span> quart</span>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-cyan-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Carte 3 -->
+        <div onclick="openPage(3)" class="step-card cursor-pointer rounded-2xl p-6 bg-purple-500/10 dark:bg-purple-950/30 border-2 border-purple-400/40 hover:border-purple-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">⚖️</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-purple-400/20 text-purple-600 dark:text-purple-300 font-bold">Étape 3</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-purple-600 dark:text-purple-300">Comparer par rapport à 1</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Comparer le numérateur et le dénominateur : moins d'une pizza, 1 entière, ou plus !</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 flex items-center justify-around border border-purple-400/30 text-xs font-bold">
+              <span class="text-emerald-500"><span class="frac"><span class="num">2</span><span class="den">5</span></span> &lt; 1</span>
+              <span class="text-amber-500"><span class="frac"><span class="num">5</span><span class="den">5</span></span> = 1</span>
+              <span class="text-rose-500"><span class="frac"><span class="num">7</span><span class="den">4</span></span> &gt; 1</span>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-purple-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Carte 4 -->
+        <div onclick="openPage(4)" class="step-card cursor-pointer rounded-2xl p-6 bg-pink-500/10 dark:bg-pink-950/30 border-2 border-pink-400/40 hover:border-pink-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">📏</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-pink-400/20 text-pink-600 dark:text-pink-300 font-bold">Étape 4</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-pink-600 dark:text-pink-300">La Droite Graduée</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">La graduation en sauts de grenouille entre 0, 1 et 2 avec fraction repérée.</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 border border-pink-400/30">
+              <div class="w-full flex items-center justify-between text-[11px] font-bold text-pink-500 border-b-2 border-pink-400 pb-1">
+                <span>0</span>
+                <span><span class="frac text-[10px]"><span class="num">1</span><span class="den">3</span></span></span>
+                <span><span class="frac text-[10px]"><span class="num">2</span><span class="den">3</span></span></span>
+                <span>1 (<span class="frac text-[10px]"><span class="num">3</span><span class="den">3</span></span>)</span>
+                <span><span class="frac text-[10px]"><span class="num">4</span><span class="den">3</span></span></span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-pink-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Carte 5 -->
+        <div onclick="openPage(5)" class="step-card cursor-pointer rounded-2xl p-6 bg-emerald-500/10 dark:bg-emerald-950/30 border-2 border-emerald-400/40 hover:border-emerald-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">🧩</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-600 dark:text-emerald-300 font-bold">Étape 5</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-emerald-600 dark:text-emerald-300">Décomposer une Fraction</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Écrire une fraction comme un nombre entier d'unités + une fraction plus petite que 1.</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 flex items-center justify-center gap-2 border border-emerald-400/30 text-xs font-bold">
+              <span class="frac text-emerald-500"><span class="num">7</span><span class="den">4</span></span>
+              <span>=</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300">1 unité</span>
+              <span>+</span>
+              <span class="frac text-emerald-500"><span class="num">3</span><span class="den">4</span></span>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-emerald-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+        <!-- Carte 6 -->
+        <div onclick="openPage(6)" class="step-card cursor-pointer rounded-2xl p-6 bg-sky-500/10 dark:bg-sky-950/30 border-2 border-sky-400/40 hover:border-sky-400 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">💎</span>
+              <span class="font-fredoka text-xs uppercase px-2.5 py-1 rounded-full bg-sky-400/20 text-sky-600 dark:text-sky-300 font-bold">Étape 6</span>
+            </div>
+            <div>
+              <h3 class="font-fredoka text-xl font-bold text-sky-600 dark:text-sky-300">Les Fractions Décimales</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Grille de 10 et grille de 100 cases, dixièmes et centièmes pour préparer la virgule.</p>
+            </div>
+            <div class="bg-white/80 dark:bg-space-800/90 rounded-xl p-3 flex items-center justify-around border border-sky-400/30 text-xs font-bold">
+              <span class="frac text-sky-500"><span class="num">1</span><span class="den">10</span></span>
+              <span>=</span>
+              <span class="frac text-sky-500"><span class="num">10</span><span class="den">100</span></span>
+              <span class="text-slate-400">➜ 0,10</span>
+            </div>
+          </div>
+          <div class="mt-5 flex items-center justify-between text-xs font-bold text-sky-500">
+            <span>Voir les représentations</span>
+            <span>➜</span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ==================== VUE DÉTAILLÉE ==================== -->
+    <div id="detail-view" class="hidden space-y-6">
+      <button onclick="showLanding()" class="inline-flex items-center gap-2 text-sm font-bold text-sky-500 hover:text-sky-400 transition-colors">
+        <span>⬅️ Revenir au QG des fractions</span>
+      </button>
+
+      <div id="page-content" class="rounded-3xl p-6 md:p-10 border shadow-2xl backdrop-blur-md"></div>
+    </div>
+
+  </main>
+
+  <script>
+    // MOTEUR SVG TRIGONOMÉTRIQUE FIABLE POUR DISQUE DE FRACTIONS
+    function generatePieSVG(num, den, color = '#38bdf8', size = 80) {
+      if (den <= 0) return '';
+      const r = size / 2 - 4;
+      const cx = size / 2;
+      const cy = size / 2;
+
+      // Cas 1 part unique (num == den ou 1 part pleine)
+      if (den === 1) {
+        const fill = num >= 1 ? color : 'rgba(148, 163, 184, 0.2)';
+        return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="#1e293b" stroke-width="2"/>
+        </svg>`;
+      }
+
+      let paths = '';
+      for (let i = 0; i < den; i++) {
+        // Départ à midi (-90 degrés)
+        const a1 = (i * 360 / den - 90) * (Math.PI / 180);
+        const a2 = ((i + 1) * 360 / den - 90) * (Math.PI / 180);
+
+        const x1 = cx + r * Math.cos(a1);
+        const y1 = cy + r * Math.sin(a1);
+        const x2 = cx + r * Math.cos(a2);
+        const y2 = cy + r * Math.sin(a2);
+
+        const isFilled = i < num;
+        const fillColor = isFilled ? color : 'rgba(148, 163, 184, 0.2)';
+        const largeArc = (360 / den > 180) ? 1 : 0;
+
+        paths += `<path d="M ${cx} ${cy} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${largeArc} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" 
+                        fill="${fillColor}" stroke="#1e293b" stroke-width="1.5" />`;
+      }
+
+      return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg>`;
+    }
+
+    // MOTEUR DE BANDE / CHOCOLAT
+    function generateBarSVG(num, den, color = '#f59e0b', width = 140, height = 28) {
+      if (den <= 0) return '';
+      let rects = '';
+      const partW = width / den;
+      for (let i = 0; i < den; i++) {
+        const isFilled = i < num;
+        const fill = isFilled ? color : 'rgba(148, 163, 184, 0.2)';
+        rects += `<rect x="${(i * partW).toFixed(2)}" y="1" width="${partW.toFixed(2)}" height="${height - 2}" fill="${fill}" stroke="#1e293b" stroke-width="1.5"/>`;
+      }
+      return `<svg width="${width}" height="${height}" class="rounded overflow-hidden shadow-sm">${rects}</svg>`;
+    }
+
+    // Données des 6 étapes
+    const fractionsSteps = [
+      {
+        id: 1,
+        title: "Qu'est-ce qu'une fraction ?",
+        badge: "Étape 1",
+        icon: "🍕",
+        borderColor: "border-amber-400",
+        bgLight: "bg-amber-500/10 dark:bg-amber-950/20",
+        textColor: "text-amber-500 dark:text-amber-300",
+        tagline: "Une fraction sert à exprimer une ou plusieurs parts d'un tout partagé équitablement.",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-amber-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-amber-500">Exemple concret : la fraction <span class="frac text-2xl text-amber-500"><span class="num">3</span><span class="den">4</span></span> (trois quarts)</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div class="bg-amber-50 dark:bg-space-700/50 p-4 rounded-xl text-center space-y-2 border border-amber-200 dark:border-space-600">
+                <div class="frac text-4xl text-amber-500">
+                  <span class="num">3</span>
+                  <span class="den">4</span>
+                </div>
+                <div class="text-xs space-y-1">
+                  <p class="font-extrabold text-sky-500">3 = NUMÉRATEUR (en HAUT)</p>
+                  <p class="text-slate-600 dark:text-slate-300">C'est le nombre de parts que l'on prend ou que l'on mange.</p>
+                  <div class="border-t border-slate-300 dark:border-space-600 my-1"></div>
+                  <p class="font-extrabold text-amber-600 dark:text-amber-400">4 = DÉNOMINATEUR (en BAS)</p>
+                  <p class="text-slate-600 dark:text-slate-300">C'est le nombre TOTAL de parts égales dans l'unité.</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col items-center justify-center p-4 bg-amber-50 dark:bg-space-700/50 rounded-xl border border-amber-200 dark:border-space-600">
+                <span class="text-xs font-bold uppercase text-slate-500 mb-2">En parts de pizza (disque)</span>
+                ${generatePieSVG(3, 4, '#f59e0b', 110)}
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">3 parts jaunes sur 4 parts égales</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center p-4 bg-amber-50 dark:bg-space-700/50 rounded-xl border border-amber-200 dark:border-space-600">
+                <span class="text-xs font-bold uppercase text-slate-500 mb-2">En tablette de chocolat (bande)</span>
+                ${generateBarSVG(3, 4, '#f59e0b', 160, 36)}
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">3 carreaux mangés sur 4</span>
+              </div>
+            </div>
+          </div>
+        `,
+        points: [
+          {
+            title: "L'Unité de départ",
+            desc: "C'est l'objet complet : 1 pizza entière, 1 gâteau ou 1 bande de papier."
+          },
+          {
+            title: "La règle sacrée : des parts ÉGALES",
+            desc: "Si une part est plus grosse que les autres, ce n'est PAS une fraction mathématique !"
+          },
+          {
+            title: "Mémo Nuage et Descente",
+            desc: "<strong>N</strong>umérateur = en <strong>H</strong>aut (vers les <em>Nuages</em>) ; <strong>D</strong>énominateur = en <strong>B</strong>as (en <em>Descente</em>)."
+          },
+          {
+            title: "La barre de fraction",
+            desc: "Elle représente le partage (la division). 3/4 correspond à 3 divisé par 4."
+          }
+        ],
+        tip: "🍕 Souviens-toi : Le dénominateur donne le nom de la part (des quarts), le numérateur compte combien tu en as (trois) !"
+      },
+      {
+        id: 2,
+        title: "Lire et Nommer les Fractions",
+        badge: "Étape 2",
+        icon: "🗣️",
+        borderColor: "border-cyan-400",
+        bgLight: "bg-cyan-500/10 dark:bg-cyan-950/20",
+        textColor: "text-cyan-500 dark:text-cyan-300",
+        tagline: "Repère les trois cas magiques (demi, tiers, quart) et la règle générale en -ième.",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-cyan-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-cyan-500">Galerie des fractions usuelles de CM1</h4>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div class="bg-cyan-50 dark:bg-space-700/50 p-3 rounded-xl border border-cyan-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-cyan-600 dark:text-cyan-300 mb-1">Un demi</span>
+                <div class="frac text-2xl text-cyan-500 mb-2"><span class="num">1</span><span class="den">2</span></div>
+                ${generatePieSVG(1, 2, '#06b6d4', 70)}
+              </div>
+
+              <div class="bg-cyan-50 dark:bg-space-700/50 p-3 rounded-xl border border-cyan-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-cyan-600 dark:text-cyan-300 mb-1">Un tiers</span>
+                <div class="frac text-2xl text-cyan-500 mb-2"><span class="num">1</span><span class="den">3</span></div>
+                ${generatePieSVG(1, 3, '#06b6d4', 70)}
+              </div>
+
+              <div class="bg-cyan-50 dark:bg-space-700/50 p-3 rounded-xl border border-cyan-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-cyan-600 dark:text-cyan-300 mb-1">Un quart</span>
+                <div class="frac text-2xl text-cyan-500 mb-2"><span class="num">1</span><span class="den">4</span></div>
+                ${generatePieSVG(1, 4, '#06b6d4', 70)}
+              </div>
+
+              <div class="bg-cyan-50 dark:bg-space-700/50 p-3 rounded-xl border border-cyan-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-cyan-600 dark:text-cyan-300 mb-1">Trois cinquièmes</span>
+                <div class="frac text-2xl text-cyan-500 mb-2"><span class="num">3</span><span class="den">5</span></div>
+                ${generatePieSVG(3, 5, '#06b6d4', 70)}
+              </div>
+            </div>
+          </div>
+        `,
+        points: [
+          {
+            title: "Les exceptions incontournables",
+            desc: "• Sur 2 : <span class='frac text-sm'><span class='num'>1</span><span class='den'>2</span></span> = <em>un demi</em>.<br>• Sur 3 : <span class='frac text-sm'><span class='num'>2</span><span class='den'>3</span></span> = <em>deux tiers</em>.<br>• Sur 4 : <span class='frac text-sm'><span class='num'>3</span><span class='den'>4</span></span> = <em>trois quarts</em>."
+          },
+          {
+            title: "À partir de 5 : suffixe '-ième'",
+            desc: "1/5 = un cinquième, 4/6 = quatre sixièmes, 5/8 = cinq huitièmes, 7/10 = sept dixièmes."
+          },
+          {
+            title: "L'accord au pluriel",
+            desc: "Dès que le numérateur est au moins 2, on met un 's' : trois quart<strong>s</strong>, deux tiers, quatre sixième<strong>s</strong>."
+          },
+          {
+            title: "Quand le haut égale le bas",
+            desc: "<span class='frac text-sm'><span class='num'>4</span><span class='den'>4</span></span> de gâteau = 1 unité entière complète !"
+          }
+        ],
+        tip: "💡 Astuce rapide : Pour retenir quart, pense à une montre : 15 minutes, c'est un quart d'heure !"
+      },
+      {
+        id: 3,
+        title: "Comparer par rapport à 1",
+        badge: "Étape 3",
+        icon: "⚖️",
+        borderColor: "border-purple-400",
+        bgLight: "bg-purple-500/10 dark:bg-purple-950/20",
+        textColor: "text-purple-500 dark:text-purple-300",
+        tagline: "Le radar immédiat pour savoir si tu as moins, autant, ou plus qu'une pizza entière !",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-purple-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-purple-500">Les 3 situations possibles face à 1 unité</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div class="bg-purple-50 dark:bg-space-700/50 p-4 rounded-xl border border-purple-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-emerald-500 mb-1">Plus petite que 1</span>
+                <div class="frac text-2xl text-emerald-500 mb-2"><span class="num">3</span><span class="den">5</span></div>
+                <div class="mb-2">${generatePieSVG(3, 5, '#10b981', 80)}</div>
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Numérateur &lt; Dénominateur (3 &lt; 5)<br>Il reste des parts dans la pizza !</p>
+              </div>
+
+              <div class="bg-purple-50 dark:bg-space-700/50 p-4 rounded-xl border border-purple-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-amber-500 mb-1">Égale à 1</span>
+                <div class="frac text-2xl text-amber-500 mb-2"><span class="num">5</span><span class="den">5</span></div>
+                <div class="mb-2">${generatePieSVG(5, 5, '#f59e0b', 80)}</div>
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Numérateur = Dénominateur (5 = 5)<br>Exactement 1 pizza complète !</p>
+              </div>
+
+              <div class="bg-purple-50 dark:bg-space-700/50 p-4 rounded-xl border border-purple-200 dark:border-space-600 flex flex-col items-center">
+                <span class="font-fredoka font-bold text-rose-500 mb-1">Plus grande que 1</span>
+                <div class="frac text-2xl text-rose-500 mb-2"><span class="num">7</span><span class="den">5</span></div>
+                <div class="flex gap-1 items-center justify-center mb-2">
+                  ${generatePieSVG(5, 5, '#f43f5e', 50)}
+                  ${generatePieSVG(2, 5, '#f43f5e', 50)}
+                </div>
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Numérateur &gt; Dénominateur (7 &gt; 5)<br>1 pizza entière + 2 parts en plus !</p>
+              </div>
+            </div>
+          </div>
+        `,
+        points: [
+          {
+            title: "Le test du numérateur",
+            desc: "Regarde le haut : s'il est plus petit que le bas, c'est inférieur à 1."
+          },
+          {
+            title: "Ouvrir une deuxième pizza",
+            desc: "Dès que le numérateur dépasse le bas (ex: 7/5), il faut une deuxième unité pour ranger les parts."
+          },
+          {
+            title: "Même dénominateur",
+            desc: "Si les parts ont la même taille : <span class='frac text-sm'><span class='num'>2</span><span class='den'>6</span></span> &lt; <span class='frac text-sm'><span class='num'>5</span><span class='den'>6</span></span>."
+          },
+          {
+            title: "Même numérateur",
+            desc: "Plus on coupe le gâteau (grand dénominateur), plus chaque part est petite : <span class='frac text-sm'><span class='num'>1</span><span class='den'>8</span></span> &lt; <span class='frac text-sm'><span class='num'>1</span><span class='den'>2</span></span>."
+          }
+        ],
+        tip: "⚖️ Règle éclair : Si le haut est plus gros que le bas, la fraction vaut plus que 1 !"
+      },
+      {
+        id: 4,
+        title: "La Droite Graduée",
+        badge: "Étape 4",
+        icon: "📏",
+        borderColor: "border-pink-400",
+        bgLight: "bg-pink-500/10 dark:bg-pink-950/20",
+        textColor: "text-pink-500 dark:text-pink-300",
+        tagline: "Placer une fraction sur une ligne : chaque intervalle est un saut de grenouille !",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-pink-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-pink-500">Exemple : Placer des quarts (<span class="frac text-pink-500"><span class="num">?</span><span class="den">4</span></span>) sur une droite</h4>
+            
+            <div class="bg-slate-50 dark:bg-space-700/50 p-6 rounded-xl border border-pink-200 dark:border-space-600 overflow-x-auto">
+              <svg viewBox="0 0 600 130" class="w-full min-w-[500px]">
+                <line x1="30" y1="70" x2="570" y2="70" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
+                <polygon points="575,70 565,65 565,75" fill="#f43f5e" />
+
+                <line x1="50" y1="50" x2="50" y2="90" stroke="#f43f5e" stroke-width="3"/>
+                <text x="50" y="110" font-size="14" font-weight="bold" text-anchor="middle" fill="currentColor">0</text>
+                
+                <line x1="112.5" y1="60" x2="112.5" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+                <line x1="175" y1="60" x2="175" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+                <line x1="237.5" y1="60" x2="237.5" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+
+                <line x1="300" y1="50" x2="300" y2="90" stroke="#f43f5e" stroke-width="3"/>
+                <text x="300" y="110" font-size="14" font-weight="bold" text-anchor="middle" fill="currentColor">1 (4/4)</text>
+
+                <line x1="362.5" y1="60" x2="362.5" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+                <line x1="425" y1="60" x2="425" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+                <line x1="487.5" y1="60" x2="487.5" y2="80" stroke="#f43f5e" stroke-width="1.5"/>
+
+                <line x1="550" y1="50" x2="550" y2="90" stroke="#f43f5e" stroke-width="3"/>
+                <text x="550" y="110" font-size="14" font-weight="bold" text-anchor="middle" fill="currentColor">2 (8/4)</text>
+
+                <circle cx="237.5" cy="70" r="7" fill="#38bdf8"/>
+                <text x="237.5" y="40" font-size="13" font-weight="bold" text-anchor="middle" fill="#38bdf8">3/4 (3 sauts)</text>
+
+                <circle cx="425" cy="70" r="7" fill="#10b981"/>
+                <text x="425" y="40" font-size="13" font-weight="bold" text-anchor="middle" fill="#10b981">6/4 = 1 + 2/4</text>
+              </svg>
+            </div>
+            <p class="text-xs font-bold text-slate-500">L'unité (entre 0 et 1) est partagée en 4 intervalles égaux. Chaque saut vaut 1/4 !</p>
+          </div>
+        `,
+        points: [
+          {
+            title: "1. Compter les intervalles entre 0 et 1",
+            desc: "Compte le nombre d'espaces entre 0 et 1 : 4 espaces = dénominateur 4."
+          },
+          {
+            title: "2. Chaque cran = 1 part",
+            desc: "Chaque pas en avant ajoute 1 part : 1/4, 2/4, 3/4..."
+          },
+          {
+            title: "3. Les repères sur les entiers",
+            desc: "0/4 = 0 ; 4/4 = 1 ; 8/4 = 2."
+          },
+          {
+            title: "4. Traverser l'unité 1",
+            desc: "Pour placer 5/4, on fait 5 sauts depuis le 0 et on dépasse 1 d'un cran."
+          }
+        ],
+        tip: "⚠️ Piège classique : Ne compte pas les traits verticaux, compte bien les INTERVALLES entre les traits !"
+      },
+      {
+        id: 5,
+        title: "Décomposer une Fraction",
+        badge: "Étape 5",
+        icon: "🧩",
+        borderColor: "border-emerald-400",
+        bgLight: "bg-emerald-500/10 dark:bg-emerald-950/20",
+        textColor: "text-emerald-500 dark:text-emerald-300",
+        tagline: "Transformer une grande fraction en un nombre de gâteaux entiers + des parts restantes.",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-emerald-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-emerald-500">Exemple visuel : Décomposer <span class="frac text-2xl text-emerald-500"><span class="num">7</span><span class="den">4</span></span></h4>
+            
+            <div class="bg-emerald-50 dark:bg-space-700/50 p-5 rounded-xl border border-emerald-200 dark:border-space-600 flex flex-col md:flex-row items-center justify-around gap-4 text-center">
+              <div class="flex items-center gap-3">
+                <div class="text-center">
+                  ${generatePieSVG(4, 4, '#10b981', 80)}
+                  <span class="text-xs font-bold text-slate-500 block mt-1">4/4 = 1 pizza</span>
+                </div>
+                <span class="text-2xl font-bold text-emerald-500">+</span>
+                <div class="text-center">
+                  ${generatePieSVG(3, 4, '#10b981', 80)}
+                  <span class="text-xs font-bold text-slate-500 block mt-1">3/4 de pizza</span>
+                </div>
+              </div>
+
+              <div class="text-left space-y-1">
+                <p class="font-fredoka text-xl font-bold text-slate-800 dark:text-white">
+                  <span class="frac text-emerald-500"><span class="num">7</span><span class="den">4</span></span> = 
+                  <span class="text-emerald-500">1</span> + 
+                  <span class="frac text-emerald-500"><span class="num">3</span><span class="den">4</span></span>
+                </p>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Encadrement de 7/4 :</p>
+                <div class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold text-sm inline-block">
+                  1 &lt; <span class="frac"><span class="num">7</span><span class="den">4</span></span> &lt; 2
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        points: [
+          {
+            title: "Combien d'unités complètes ?",
+            desc: "Dans 7/4, chaque pizza a 4 parts. 7 parts = 1 pizza entière (4/4) + 3 parts restantes (3/4)."
+          },
+          {
+            title: "La méthode par division",
+            desc: "7 divisé par 4 donne quotient = <strong>1</strong> et reste = <strong>3</strong>."
+          },
+          {
+            title: "Avec plusieurs unités",
+            desc: "<span class='frac text-sm'><span class='num'>11</span><span class='den'>3</span></span> = 3 + <span class='frac text-sm'><span class='num'>2</span><span class='den'>3</span></span> car 11 = (3 × 3) + 2."
+          },
+          {
+            title: "Encadrer entre deux entiers",
+            desc: "Puisque 11/3 vaut 3 + un reste, 3 &lt; 11/3 &lt; 4."
+          }
+        ],
+        tip: "🧩 Formule magique : Fraction = Nombres entiers + (Reste / Dénominateur) !"
+      },
+      {
+        id: 6,
+        title: "Les Fractions Décimales",
+        badge: "Étape 6",
+        icon: "💎",
+        borderColor: "border-sky-400",
+        bgLight: "bg-sky-500/10 dark:bg-sky-950/20",
+        textColor: "text-sky-500 dark:text-sky-300",
+        tagline: "Les fractions partagées en 10 ou 100 : le tremplin vers les nombres à virgule !",
+        visualBlock: `
+          <div class="bg-white/80 dark:bg-space-800/90 rounded-2xl p-6 border border-sky-400/40 space-y-4">
+            <h4 class="font-fredoka text-lg font-bold text-sky-500">Représentation visuelle : Dixièmes et Centièmes</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-sky-50 dark:bg-space-700/50 p-4 rounded-xl border border-sky-200 dark:border-space-600 text-center flex flex-col items-center">
+                <span class="font-fredoka font-bold text-sky-600 dark:text-sky-300 mb-2">Un dixième (1/10)</span>
+                <div class="frac text-2xl text-sky-500 mb-2"><span class="num">1</span><span class="den">10</span></div>
+                ${generateBarSVG(1, 10, '#0284c7', 200, 30)}
+                <span class="text-xs text-slate-500 mt-2">1 bande sur 10 découpées</span>
+              </div>
+
+              <div class="bg-sky-50 dark:bg-space-700/50 p-4 rounded-xl border border-sky-200 dark:border-space-600 text-center flex flex-col items-center justify-center">
+                <span class="font-fredoka font-bold text-sky-600 dark:text-sky-300 mb-2">L'équivalence en or</span>
+                <div class="flex items-center gap-2 text-2xl font-bold">
+                  <div class="frac text-sky-500"><span class="num">1</span><span class="den">10</span></div>
+                  <span>=</span>
+                  <div class="frac text-sky-500"><span class="num">10</span><span class="den">100</span></div>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-slate-300 mt-2">1 dixième = 10 centièmes ! Comme 1 pièce de 10 centimes = 10 pièces de 1 centime.</p>
+              </div>
+            </div>
+          </div>
+        `,
+        points: [
+          {
+            title: "C'est quoi une fraction décimale ?",
+            desc: "C'est une fraction dont le dénominateur est 10, 100 ou 1 000."
+          },
+          {
+            title: "Décomposer une fraction décimale",
+            desc: "<span class='frac text-sm'><span class='num'>235</span><span class='den'>100</span></span> = 2 + <span class='frac text-sm'><span class='num'>3</span><span class='den'>10</span></span> + <span class='frac text-sm'><span class='num'>5</span><span class='den'>100</span></span>."
+          },
+          {
+            title: "Passage aux nombres à virgule",
+            desc: "1/10 = <strong>0,1</strong> ; 1/100 = <strong>0,01</strong> ; 235/100 = <strong>2,35</strong>."
+          },
+          {
+            title: "L'unité complète",
+            desc: "1 = 10/10 = 100/100 = 1 000/1 000."
+          }
+        ],
+        tip: "🚀 Félicitations : Tu maîtrises toutes les représentations concrètes des fractions en CM1 !"
+      }
+    ];
+
+    let completedSteps = new Set();
+
+    function updateProgress() {
+      const count = completedSteps.size;
+      const percent = (count / 6) * 100;
+      
+      document.getElementById('progress-text').innerText = `${count} / 6 validées`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+
+      const rankBadge = document.getElementById('rank-badge');
+      if (count === 0) rankBadge.innerText = "🍰 Apprenti Partageur";
+      else if (count <= 2) rankBadge.innerText = "🍕 Pilote des Quarts & Tiers";
+      else if (count <= 4) rankBadge.innerText = "📐 As de la Ligne Graduée";
+      else if (count === 5) rankBadge.innerText = "⚡ Expert Décomposeur";
+      else {
+        rankBadge.innerText = "👑 Maître Suprême des Fractions !";
+        triggerCelebration();
+      }
+    }
+
+    function toggleStep(id) {
+      if (completedSteps.has(id)) {
+        completedSteps.delete(id);
+      } else {
+        completedSteps.add(id);
+      }
+      updateProgress();
+      renderPage(id);
+    }
+
+    function showLanding() {
+      document.getElementById('landing-view').classList.remove('hidden');
+      document.getElementById('detail-view').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openPage(stepId) {
+      document.getElementById('landing-view').classList.add('hidden');
+      document.getElementById('detail-view').classList.remove('hidden');
+      renderPage(stepId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderPage(stepId) {
+      const step = fractionsSteps.find(s => s.id === stepId);
+      const isDone = completedSteps.has(stepId);
+      const prevId = stepId > 1 ? stepId - 1 : null;
+      const nextId = stepId < 6 ? stepId + 1 : null;
+
+      const container = document.getElementById('page-content');
+      container.className = `rounded-3xl p-6 md:p-10 border-2 ${step.borderColor} ${step.bgLight} shadow-2xl backdrop-blur-md transition-all`;
+
+      container.innerHTML = `
+        <div class="space-y-8">
+          
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-300 dark:border-slate-700 pb-6">
+            <div class="flex items-center space-x-4">
+              <span class="text-5xl">${step.icon}</span>
+              <div>
+                <span class="font-fredoka text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-200 dark:bg-space-800 ${step.textColor}">
+                  ${step.badge}
+                </span>
+                <h2 class="font-fredoka text-2xl md:text-4xl font-bold mt-1 text-slate-900 dark:text-white">
+                  ${step.title}
+                </h2>
+                <p class="text-sm md:text-base font-semibold text-slate-600 dark:text-slate-300">${step.tagline}</p>
+              </div>
+            </div>
+
+            <button onclick="toggleStep(${step.id})" class="px-5 py-3 rounded-2xl font-fredoka font-bold text-sm transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2 ${
+              isDone 
+              ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+              : 'bg-white dark:bg-space-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-space-700 hover:border-emerald-400'
+            }">
+              <span>${isDone ? '✅ Étape validée avec succès !' : '⭕ Marquer cette étape comme apprise'}</span>
+            </button>
+          </div>
+
+          <!-- Bloc visuel enrichi -->
+          ${step.visualBlock}
+
+          <!-- Points détaillés -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            ${step.points.map((pt, i) => `
+              <div class="bg-white/80 dark:bg-space-800/80 rounded-2xl p-5 border border-slate-200/60 dark:border-space-700 shadow-sm space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-space-700 text-xs font-fredoka font-bold flex items-center justify-center text-slate-700 dark:text-slate-300">${i + 1}</span>
+                  <h4 class="font-fredoka text-base md:text-lg font-bold text-slate-900 dark:text-white">${pt.title}</h4>
+                </div>
+                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed pl-8">${pt.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-sm font-semibold flex items-center gap-3">
+            <span class="text-2xl">💡</span>
+            <div>${step.tip}</div>
+          </div>
+
+          <div class="flex items-center justify-between pt-6 border-t border-slate-300 dark:border-slate-700">
+            ${prevId ? `
+              <button onclick="openPage(${prevId})" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:${step.textColor} transition-colors flex items-center gap-2">
+                <span>⬅️ Étape précédente</span>
+              </button>
+            ` : '<div></div>'}
+
+            <button onclick="showLanding()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-space-800 text-xs font-bold hover:bg-slate-300 dark:hover:bg-space-700 transition-colors">
+              Menu principal
+            </button>
+
+            ${nextId ? `
+              <button onclick="openPage(${nextId})" class="text-sm font-bold ${step.textColor} hover:opacity-80 transition-opacity flex items-center gap-2">
+                <span>Étape suivante ➡️</span>
+              </button>
+            ` : '<div></div>'}
+          </div>
+
+        </div>
+      `;
+    }
+
+    // Gestion du simulateur interactif
+    const fractionNames = {
+      1: { 2: "un demi", 3: "un tiers", 4: "un quart", 5: "un cinquième", 6: "un sixième", 7: "un septième", 8: "un huitième", 9: "un neuvième", 10: "un dixième" },
+      2: { 3: "deux tiers", 4: "deux quarts", 5: "deux cinquièmes", 6: "deux sixièmes", 7: "deux septièmes", 8: "deux huitièmes", 9: "deux neuvièmes", 10: "deux dixièmes" },
+      3: { 4: "trois quarts", 5: "trois cinquièmes", 6: "trois sixièmes", 7: "trois septièmes", 8: "trois huitièmes", 9: "trois neuvièmes", 10: "trois dixièmes" },
+      4: { 5: "quatre cinquièmes", 6: "quatre sixièmes", 7: "quatre septièmes", 8: "quatre huitièmes", 9: "quatre neuvièmes", 10: "quatre dixièmes" },
+      5: { 4: "cinq quarts", 6: "cinq sixièmes", 7: "cinq septièmes", 8: "cinq huitièmes", 9: "cinq neuvièmes", 10: "cinq dixièmes" },
+      7: { 4: "sept quarts", 5: "sept cinquièmes" }
+    };
+
+    function updateLiveLab() {
+      const numInput = document.getElementById('num-range');
+      const denInput = document.getElementById('den-range');
+      if (!numInput || !denInput) return;
+
+      const num = parseInt(numInput.value, 10);
+      const den = parseInt(denInput.value, 10);
+
+      document.getElementById('num-val').innerText = num;
+      document.getElementById('den-val').innerText = den;
+
+      document.getElementById('live-num').innerText = num;
+      document.getElementById('live-den').innerText = den;
+
+      // Nom de la fraction
+      let nameText = `${num}/${den}`;
+      if (num === den) {
+        nameText = "1 unité entière";
+      } else if (fractionNames[num] && fractionNames[num][den]) {
+        nameText = fractionNames[num][den];
+      } else {
+        nameText = `${num} ${den}ièmes`;
+      }
+      document.getElementById('live-name').innerText = nameText;
+
+      // Comparaison par rapport à 1
+      const compEl = document.getElementById('live-comp');
+      if (num < den) {
+        compEl.innerText = "< 1 (inférieure à 1)";
+        compEl.className = "text-xs font-bold text-emerald-500 mt-1";
+      } else if (num === den) {
+        compEl.innerText = "= 1 (exactement 1)";
+        compEl.className = "text-xs font-bold text-amber-500 mt-1";
+      } else {
+        compEl.innerText = "> 1 (plus grande que 1 !)";
+        compEl.className = "text-xs font-bold text-rose-500 mt-1";
+      }
+
+      // 1. Rendu SVG du ou des disques
+      const pieContainer = document.getElementById('live-pie-container');
+      if (num <= den) {
+        pieContainer.innerHTML = generatePieSVG(num, den, '#38bdf8', 90);
+      } else {
+        // Supérieur à 1 : afficher 2 disques
+        const rest = num - den;
+        pieContainer.innerHTML = `
+          <div class="flex items-center gap-1.5">
+            <div class="text-center">
+              ${generatePieSVG(den, den, '#f43f5e', 54)}
+              <span class="text-[9px] font-bold text-slate-400 block">1 pleine</span>
+            </div>
+            <span class="text-xs font-bold text-rose-500">+</span>
+            <div class="text-center">
+              ${generatePieSVG(rest, den, '#f43f5e', 54)}
+              <span class="text-[9px] font-bold text-slate-400 block">${rest}/${den}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. Rendu SVG de la barre / chocolat
+      const barContainer = document.getElementById('live-bar-container');
+      if (num <= den) {
+        barContainer.innerHTML = generateBarSVG(num, den, '#f59e0b', 120, 26);
+      } else {
+        const rest = num - den;
+        barContainer.innerHTML = `
+          <div class="flex flex-col gap-1 items-center">
+            ${generateBarSVG(den, den, '#f43f5e', 110, 18)}
+            ${generateBarSVG(rest, den, '#f43f5e', 110, 18)}
+          </div>
+        `;
+      }
+    }
+
+    function setLiveFraction(num, den) {
+      document.getElementById('num-range').value = num;
+      document.getElementById('den-range').value = den;
+      updateLiveLab();
+    }
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+    }
+
+    function triggerCelebration() {
+      confetti({
+        particleCount: 140,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#38bdf8', '#ec4899', '#facc15', '#34d399', '#a855f7']
+      });
+    }
+
+    // Initialisation synchrone et sécurisée dès le chargement
+    window.addEventListener('DOMContentLoaded', () => {
+      // Petite miniature de la carte 1
+      const card1Pie = document.getElementById('card1-pie');
+      if (card1Pie) card1Pie.innerHTML = generatePieSVG(3, 4, '#f59e0b', 42);
+
+      updateLiveLab();
+      updateProgress();
+    });
+
+    // Appel direct au cas où le DOM est déjà prêt
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      const card1Pie = document.getElementById('card1-pie');
+      if (card1Pie) card1Pie.innerHTML = generatePieSVG(3, 4, '#f59e0b', 42);
+      updateLiveLab();
+      updateProgress();
+    }
+  </script>
+</body>
+</html>
